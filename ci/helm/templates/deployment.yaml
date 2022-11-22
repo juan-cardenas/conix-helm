@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "helm.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "helm.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec: {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }} {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: {{ .Values.configMaps.env.environment.items.SMXSISEG_JDBC_URL.envVarName }}
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: SMXSISEG_JDBC_URL
+            - name: {{ .Values.configMaps.env.environment.items.SMXSISEG_USERNAME.envVarName }}
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: SMXSISEG_USERNAME
+            - name: {{ .Values.secret.smxsiseg.envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: smxsiseg
+            - name: {{ .Values.configMaps.env.environment.items.LOGS_ROOT.envVarName }}
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: LOGS_ROOT
+            - name: {{ .Values.configMaps.env.environment.items.LOGS_EC_COM_SMX.envVarName }}
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: LOGS_EC_COM_SMX

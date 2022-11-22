@@ -1,0 +1,6 @@
+dependencies:
+- name: deployment
+  repository: https://cf1hlmnxs.cfavorita.net/repository/helm-base/
+  version: 2.0.1
+digest: sha256:529a03409a08008b019a32f3c7b23d2ec4c62bb3383ea232abace65a4143808c
+generated: "2022-06-21T12:58:20.522071775-05:00"

@@ -1,0 +1,104 @@
+global:
+  appVersion: 1.1.3-RELEASE
+  name: conix-ws-gp
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: cf1dck.cfavorita.net/ec.com.smx.conixws/conix-ws-gp
+  pullPolicy: Always
+  tag: "1.1.3-RELEASE"
+imagePullSecrets:
+  - name: cf-regcred
+#
+# ConfigMaps
+#
+configMaps:
+  env: #name of configmap
+    environment: #set items like environment variables
+      items:
+        CURRENT_PROFILE:
+          envVarName: SPRING_PROFILES_ACTIVE
+        ENV:
+          envVarName: env
+        DOMAIN:
+          envVarName: domain
+        SMXSISEG_JDBC_URL:
+          envVarName: DB_JDBC_URL
+        SMXSISEG_USERNAME:
+          envVarName: DB_USERNAME
+        LOGS_ROOT:
+          envVarName: LOGS_ROOT
+        LOGS_EC_COM_SMX:
+          envVarName: LOGS_EC_COM_SMX
+#
+# Secrets
+#
+secrets: {}
+#    cf-secrets:
+#      environment: # Items set like environment variable
+#        items:
+#          smxmbase:
+#            envVarName: DB_PASSWORD
+#      volume: # Items set like file in volume
+#        mountPath: /home/secret/
+#        items:
+#          id-rsa:
+#            filePath: id_rsa
+#            fileMode: 644
+
+#  Secrets for schema
+secret:
+  name: cf-secrets
+  smxsiseg:
+    envVarName: DB_PASSWORD
+db2:
+  enabled: true
+  database: BDDPREPROD
+  schemas:
+    - smxsiseg
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+service:
+  type: ClusterIP
+  sessionAffinity: None
+  port: 8080
+  targetPort: 8080
+ingress:
+  enabled: true
+  hosts:
+    - host: aplpre.favorita.ec
+      paths:
+        - /conixWsRey/
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 1m
+    memory: 128Mi
+envVars:
+  logging.level.root: WARN
+  JAVA_TOOL_OPTIONS: -Xms3G -Xmx3G -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=2G -Djava.net.preferIPv4Stack=true
+  TZ: America/Guayaquil
+
+livenessProbe:
+  httpGet:
+    path: /scfServices
+    port: 8080
+  initialDelaySeconds: 90
+  periodSeconds: 20
+  timeoutSeconds: 180
+readinessProbe:
+  httpGet:
+    path: /scfServices
+    port: 8080
+  initialDelaySeconds: 90
+  periodSeconds: 20
+  timeoutSeconds: 180
