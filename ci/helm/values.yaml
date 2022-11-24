@@ -87,7 +87,7 @@ envVars:
   logging.level.root: WARN
   JAVA_TOOL_OPTIONS: -Xms3G -Xmx3G -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=2G -Djava.net.preferIPv4Stack=true
   TZ: America/Guayaquil
-  COUNTRY_DEFINITION: COUNTRY_DEFINITION
+  COUNTRY_DEFINITION: EC
 
 livenessProbe:
   httpGet:

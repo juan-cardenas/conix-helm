@@ -100,7 +100,7 @@ questions:
     group: "App Settings"
   - variable: envVars.COUNTRY_DEFINITION
     default: "EC"
-    description: "Country definition"
+    description: "COUNTRY_DEFINITION"
     type: enum
     options:
       - "EC"
