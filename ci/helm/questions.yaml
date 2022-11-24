@@ -98,6 +98,16 @@ questions:
     required: true
     label: logging.level.root
     group: "App Settings"
+  - variable: envVars.COUNTRY_DEFINITION
+    default: "EC"
+    description: "Country definition"
+    type: enum
+    options:
+      - "EC"
+      - "PA"
+    required: true
+    label: COUNTRY_DEFINITION
+    group: "App Settings"
 
   - variable: deployment.livenessProbe.httpGet.path
     default: "/conixWsRey/api/file/testConnection"
